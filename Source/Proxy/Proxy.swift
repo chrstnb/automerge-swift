@@ -62,7 +62,7 @@ import Foundation
 @dynamicMemberLookup
 public final class Proxy<Wrapped> {
 
-    init(
+    public init(
         context: Context,
         objectId: ObjectId?,
         path: [Context.KeyPathElement],
@@ -74,7 +74,7 @@ public final class Proxy<Wrapped> {
         self.valueResolver = value
     }
 
-    init(
+    public init(
         context: Context,
         objectId: ObjectId?,
         path: [Context.KeyPathElement],

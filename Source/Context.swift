@@ -10,8 +10,8 @@ import Foundation
 public final class Context {
 
     public struct KeyPathElement: Equatable {
-        let key: Key
-        let objectId: ObjectId?
+        public let key: Key
+        public let objectId: ObjectId?
     }
 
     convenience init(cache: [ObjectId: Object], actorId: Actor, maxOp: Int) {
@@ -25,7 +25,7 @@ public final class Context {
         )
     }
 
-    init(
+    public init(
         actorId: Actor,
         applyPatch: @escaping (MapDiff, Object?, inout [ObjectId: Object]) -> Object?,
         updated: [ObjectId: Object],
