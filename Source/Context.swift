@@ -25,7 +25,7 @@ public final class Context {
         )
     }
 
-    public init(
+    init(
         actorId: Actor,
         applyPatch: @escaping (MapDiff, Object?, inout [ObjectId: Object]) -> Object?,
         updated: [ObjectId: Object],
