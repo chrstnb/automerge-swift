@@ -88,8 +88,8 @@ public final class Proxy<Wrapped> {
     
     /// The Id of the object this proxy represents.
     public let objectId: ObjectId?
-    let context: Context
-    let path: [Context.KeyPathElement]
+    public let context: Context
+    public let path: [Context.KeyPathElement]
     private let valueResolver: () -> Wrapped?
 
     let objectDecoder = ObjectDecoder()
