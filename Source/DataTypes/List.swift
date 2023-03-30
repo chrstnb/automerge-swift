@@ -8,9 +8,9 @@
 import Foundation
 
 /// A representation of a List object within Automerge.
-struct List: Equatable, Codable {
+public struct List: Equatable, Codable {
 
-    let objectId: ObjectId
+    public let objectId: ObjectId
     private var listValues: [Object]
     var conflicts: [[ObjectId: Object]]
     var elemIds: [ObjectId]
@@ -22,12 +22,12 @@ struct List: Equatable, Codable {
         self.elemIds = elemIds
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(listValues)
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.listValues = try container.decode([Object].self)
         self.objectId = ObjectId("")
@@ -38,7 +38,7 @@ struct List: Equatable, Codable {
 }
 
 extension List: Collection, MutableCollection, RangeReplaceableCollection {
-    init() {
+    public init() {
         self.objectId = ""
         self.listValues = []
         self.conflicts = []
@@ -46,15 +46,15 @@ extension List: Collection, MutableCollection, RangeReplaceableCollection {
     }
 
 
-    var startIndex: Int {
+    public var startIndex: Int {
         return listValues.startIndex
     }
 
-    var endIndex: Int {
+    public var endIndex: Int {
         return listValues.endIndex
     }
 
-    subscript(position: Int) -> Object {
+    public subscript(position: Int) -> Object {
         get {
            return listValues[position]
         }
@@ -64,7 +64,7 @@ extension List: Collection, MutableCollection, RangeReplaceableCollection {
     }
 
     // Method that returns the next index when iterating
-    func index(after i: Int) -> Int {
+    public func index(after i: Int) -> Int {
         return listValues.index(after: i)
     }
 
@@ -78,7 +78,7 @@ extension List: Collection, MutableCollection, RangeReplaceableCollection {
 
 extension List: ExpressibleByArrayLiteral {
 
-    init(arrayLiteral elements: Object...) {
+    public init(arrayLiteral elements: Object...) {
         self.objectId = ""
         self.listValues = elements
         self.conflicts = []

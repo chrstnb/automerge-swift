@@ -16,11 +16,11 @@ public struct Map: Equatable, Codable {
         self.conflicts = conflicts
     }
 
-    let objectId: ObjectId
+    public let objectId: ObjectId
     private var mapValues: [String: Object]
     var conflicts: [String: [ObjectId: Object]]
 
-    subscript(_ key: String) -> Object? {
+    public subscript(_ key: String) -> Object? {
         get {
             return mapValues[key]
         }

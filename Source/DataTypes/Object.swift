@@ -18,7 +18,7 @@ public enum Object: Equatable, Codable {
     case date(Date)
     case primitive(Primitive)
 
-    var objectId: ObjectId? {
+    public var objectId: ObjectId? {
         switch self {
         case .text(let obj):
             return obj.objectId
@@ -33,11 +33,11 @@ public enum Object: Equatable, Codable {
         }
     }
 
-    var isPrimitive: Bool {
+    public var isPrimitive: Bool {
         return objectId == nil
     }
 
-    init(arrayLiteral elements: Object...) {
+    public init(arrayLiteral elements: Object...) {
         self = .list(List(objectId: ObjectId(""), listValues: elements))
     }
 
@@ -86,19 +86,19 @@ public enum Object: Equatable, Codable {
 
 extension Object: ExpressibleByStringLiteral, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, ExpressibleByArrayLiteral, ExpressibleByDictionaryLiteral {
 
-    init(stringLiteral value: StringLiteralType) {
+    public init(stringLiteral value: StringLiteralType) {
         self = .primitive(.string(value))
     }
 
-    init(floatLiteral value: Float) {
+    public init(floatLiteral value: Float) {
         self = .primitive(.float64(Double(value)))
     }
 
-    init(integerLiteral value: IntegerLiteralType) {
+    public init(integerLiteral value: IntegerLiteralType) {
         self = .primitive(.int(value))
     }
 
-    init(dictionaryLiteral elements: (String, Object)...) {
+    public init(dictionaryLiteral elements: (String, Object)...) {
         self = .map(Map(mapValues: Dictionary(uniqueKeysWithValues: elements)))
     }
 }
