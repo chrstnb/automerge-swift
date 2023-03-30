@@ -7,9 +7,9 @@
 
 import Foundation
 
-final class Context {
+public final class Context {
 
-    struct KeyPathElement: Equatable {
+    public struct KeyPathElement: Equatable {
         let key: Key
         let objectId: ObjectId?
     }

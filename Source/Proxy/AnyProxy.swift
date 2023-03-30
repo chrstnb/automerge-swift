@@ -30,8 +30,8 @@ public final class AnyProxy {
     }
 
     public let objectId: ObjectId?
-    let context: Context
-    let path: [Context.KeyPathElement]
+    public let context: Context
+    public let path: [Context.KeyPathElement]
 
     public subscript(dynamicMember dynamicMember: String) -> AnyProxy {
         guard case .map(let map)? = objectId.map({ context.getObject(objectId: $0) }) else {

@@ -8,7 +8,7 @@
 import Foundation
 
 /// A representation of a Map object within Automerge.
-struct Map: Equatable, Codable {
+public struct Map: Equatable, Codable {
 
     init(objectId: ObjectId = "", mapValues: [String: Object] = [:], conflicts: [String: [ObjectId: Object]] = [:]) {
         self.objectId = objectId
@@ -29,12 +29,12 @@ struct Map: Equatable, Codable {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(mapValues)
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.mapValues = try container.decode([String: Object].self)
         self.objectId = ObjectId("")
@@ -49,8 +49,7 @@ extension Map: Sequence {
 }
 
 extension Map: ExpressibleByDictionaryLiteral {
-
-    init(dictionaryLiteral elements: (String, Object)...) {
+    public init(dictionaryLiteral elements: (String, Object)...) {
         self = Map(mapValues: Dictionary(uniqueKeysWithValues: elements))
     }
 
