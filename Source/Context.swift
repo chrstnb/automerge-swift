@@ -12,6 +12,11 @@ public final class Context {
     public struct KeyPathElement: Equatable {
         public let key: Key
         public let objectId: ObjectId?
+
+        public init(key: Key, objectId: ObjectId?) {
+            self.key = key
+            self.objectId = objectId
+        }
     }
 
     convenience init(cache: [ObjectId: Object], actorId: Actor, maxOp: Int) {
