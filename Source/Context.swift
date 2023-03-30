@@ -341,7 +341,7 @@ public final class Context {
      * Updates the map object at path `path`, setting the property with name
      * `key` to `value`.
      */
-    func setMapKey(path: [KeyPathElement], key: String, value: Object) {
+    public func setMapKey(path: [KeyPathElement], key: String, value: Object) {
         if case .primitive(.null) = value {
             deleteMapKey(path: path, key: key)
             return
@@ -470,7 +470,7 @@ public final class Context {
     /**
      * Returns an object (not proxied) from the cache or updated set, as appropriate.
      */
-    func getObject(objectId: ObjectId) -> Object {
+    public func getObject(objectId: ObjectId) -> Object {
         let updatedObject = updated[objectId]
         let cachedObject = cache[objectId]
         guard let object = updatedObject ?? cachedObject else {

@@ -10,7 +10,7 @@ import Foundation
 /// A mutable wrapper around your model.
 public final class MutableProxy<Wrapped> {
 
-    init(
+    public init(
         context: Context,
         objectId: ObjectId?,
         path: [Context.KeyPathElement],
@@ -22,7 +22,7 @@ public final class MutableProxy<Wrapped> {
         self.valueResolver = value
     }
 
-    init(
+    public init(
         context: Context,
         objectId: ObjectId?,
         path: [Context.KeyPathElement],
