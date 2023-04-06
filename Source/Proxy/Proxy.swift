@@ -92,8 +92,8 @@ public final class Proxy<Wrapped> {
     public let path: [Context.KeyPathElement]
     private let valueResolver: () -> Wrapped?
 
-    let objectDecoder = ObjectDecoder()
-    let objectEncoder = ObjectEncoder()
+    public let objectDecoder = ObjectDecoder()
+    public let objectEncoder = ObjectEncoder()
     
     /// Returns the current instance of your document's model.
     public func get() -> Wrapped {

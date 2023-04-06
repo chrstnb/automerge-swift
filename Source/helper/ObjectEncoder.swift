@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ObjectEncoder {
+public final class ObjectEncoder {
 
     func encode<T: Encodable>(_ value: T) throws -> Object {
         let objectEncoding = ObjectEncoding(encodedData: ObjectEncoding.Data())
