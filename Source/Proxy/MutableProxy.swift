@@ -39,8 +39,8 @@ public final class MutableProxy<Wrapped> {
     public let path: [Context.KeyPathElement]
     private let valueResolver: () -> Wrapped?
 
-    let objectDecoder = ObjectDecoder()
-    let objectEncoder = ObjectEncoder()
+    public let objectDecoder = ObjectDecoder()
+    public let objectEncoder = ObjectEncoder()
 
     public func get() -> Wrapped {
         return valueResolver()!

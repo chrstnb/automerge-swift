@@ -9,7 +9,7 @@ import Foundation
 
 public final class ObjectEncoder {
 
-    func encode<T: Encodable>(_ value: T) throws -> Object {
+    public func encode<T: Encodable>(_ value: T) throws -> Object {
         let objectEncoding = ObjectEncoding(encodedData: ObjectEncoding.Data())
         if let date = value as? Date {
             return .date(date)
@@ -28,7 +28,7 @@ public final class ObjectEncoder {
         return object
     }
 
-    func encode<T: Encodable>(_ value: Table<T>) throws -> Object {
+    public func encode<T: Encodable>(_ value: Table<T>) throws -> Object {
         var entries: [ObjectId: Object] = [:]
         for id in value.ids {
             entries[id] = try encode(value[id])
