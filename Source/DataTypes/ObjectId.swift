@@ -33,7 +33,7 @@ public struct ObjectId: Equatable, Hashable, Codable, ExpressibleByStringLiteral
         try container.encode(objectId)
     }
 
-    static let root: ObjectId = "_root"
+    public static let root: ObjectId = "_root"
     static let head: ObjectId = "_head"
 
     public init(stringLiteral value: StringLiteralType) {

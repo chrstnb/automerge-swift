@@ -84,6 +84,7 @@ class AutomergeTest: XCTestCase {
         XCTAssertEqual(s1.content, Scheme(first: nil, second: nil))
         XCTAssertEqual(s2.content, Scheme(first: "one", second: "two"))
     }
+    
 
     // should allow repeated reading and writing of values
     func testSerialUseChanges2() {
@@ -1609,6 +1610,217 @@ class AutomergeTest: XCTestCase {
         XCTAssertEqual(changes2.count, 0)
     }
 
+    func testGetChangesBetween3() {
+        struct SchemeWrapper: Codable, Equatable {
+            var scheme: [String: OtherScheme]
+        }
+        struct OtherScheme: Codable, Equatable {
+            var title: String
+        }
+        var s1 = Document(SchemeWrapper(scheme: ["Chaffinch": .init(title: "test")]))
+        s1.change { proxy in
+            proxy.scheme["Chaffinch"][dynamicMember: \OtherScheme.title].set("test2")
+        }
+
+    }
+
+
+    // should handle assignment of an object
+    func testSerialUseNestedMapssss() {
+        struct Scheme: Codable, Equatable {
+            struct Style: Codable, Equatable { let bold: Bool; let fontSize: Int }
+            var style: Style?
+        }
+        var s1 = Document(Scheme(style: .init(bold: false, fontSize: 12)))
+//        print(s1.rootProxy().recurseObject(.root))
+        var s2 = Document(Scheme(style: .init(bold: true, fontSize: 12)))
+        s1.rootProxy().mergeChangesFrom(other: s2.rootProxy())
+        print(s1.content)
+//        let encoder = JSONEncoder()
+//        let data = try! encoder.encode(s1.content)
+//
+//        guard let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+//            fatalError("Failed to parse JSON data")
+//        }
+//
+//        var dictionary: [String: Codable] = [:]
+//
+//        for (key, value) in json {
+//            if let array: [AnyCodableWrapper] = decode(from: json, forKey: key) {
+//                dictionary[key] = array
+//            } else if let object: AnyCodableWrapper = decode(from: json, forKey: key).first {
+//                dictionary[key] = object
+//            } else if let stringValue = value as? String {
+//                dictionary[key] = stringValue
+//            } else {
+//                fatalError("Unsupported value type")
+//            }
+//        }
+//
+
+
+//        let encoder = JSONEncoder()
+//        let data = try! encoder.encode(s1.content)
+
+//        let dictionary = try! JSONDecoder().decode([String: Codable].self, from: data)
+//        let document = Document(convertToStringDict(from: dictionary))
+//        document.change { proxy in
+//            proxy[""]
+//        }
+//        var s1 = Document(Scheme(style: .init(bold: false, fontSize: 12)))
+//        var s2 = Document(Scheme(style: .init(bold: true, fontSize: 12)))
+//        s1.rootProxy().mergeChangesFrom(other: s2.rootProxy())
+//        print(s1.content)
+//        s1.change {
+//            $0.style?.set(.init(bold: false, fontSize: 12))
+//        }
+//        XCTAssertEqual(s1.content, Scheme(style: .init(bold: false, fontSize: 12)))
+//        XCTAssertEqual(s1.content.style, .init(bold: false, fontSize: 12))
+//        XCTAssertEqual(s1.content.style?.bold, false)
+//        XCTAssertEqual(s1.content.style?.fontSize, 12)
+    }
+
+    func convertToStringDict(from dict: [String: Any]) -> [String: String] {
+        var result = [String: String]()
+        for (key, value) in dict {
+            if let dictValue = value as? [String: Any] {
+                result[key] = convertToStringDict(from: dictValue).description
+            } else {
+                result[key] = "\(value)"
+            }
+        }
+        return result
+    }
+
+
+    // should handle assignment of an object
+    func testSerialUseNestedMapss() {
+        struct InnerScheme: Codable, Equatable { var type: String? }
+        struct Scheme: Codable, Equatable { var foo: InnerScheme?}
+        var s1 = Document(Scheme(foo: InnerScheme(type: "test")))
+        do {
+            let dictionary = try s1.content.encodeToDictionary()
+//            let jsonData = try JSONSerialization.data(withJSONObject: dictionary.mapValues { $0.value }, options: [])
+            var document = Document(dictionary)
+            print(dictionary)
+            document.change { proxy in
+//                proxy["foo"].set(.init("test2"))
+            }
+            let decodedPerson = try Scheme(from: document.content)
+            print(decodedPerson)
+        } catch {
+            print(error)
+        }
+
+
+
+        let keyPath: AnyKeyPath = \Scheme.foo
+        s1.change { proxy in
+            let result = proxy[keyPath: keyPath]
+            print(result)
+//            proxy[keyPath: keyPath]?.set("test2")
+        }
+
+//        var s2 = Document(Scheme(foo: "test2"))
+//        s1.change { proxy in
+//            proxy.foo?.set("test2")
+//        }
+//        s1.rootProxy().mergeChangesFrom(other: s2.rootProxy())
+        print(s1)
+//        s1.change {
+//            $0.style?.set(.init(bold: false, fontSize: 12))
+//        }
+//        XCTAssertEqual(s1.content, Scheme(style: .init(bold: false, fontSize: 12)))
+//        XCTAssertEqual(s1.content.style, .init(bold: false, fontSize: 12))
+//        XCTAssertEqual(s1.content.style?.bold, false)
+//        XCTAssertEqual(s1.content.style?.fontSize, 12)
+    }
 }
 
+struct AnyCodable: Codable {
+    var value: Any
+
+    init(_ value: Any) {
+        self.value = value
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch value {
+        case let intVal as Int:
+            try container.encode(intVal)
+        case let doubleVal as Double:
+            try container.encode(doubleVal)
+        case let stringVal as String:
+            try container.encode(stringVal)
+        case let boolVal as Bool:
+            try container.encode(boolVal)
+        case let arrayVal as [Any]:
+            let anyCodableArray = arrayVal.map { AnyCodable($0) }
+            try container.encode(anyCodableArray)
+        case let dictVal as [String: Any]:
+            let anyCodableDict = try dictVal.mapValues { AnyCodable($0) }
+            try container.encode(anyCodableDict)
+        default:
+            throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: container.codingPath, debugDescription: "Unsupported type"))
+        }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let intVal = try? container.decode(Int.self) {
+            value = intVal
+        } else if let doubleVal = try? container.decode(Double.self) {
+            value = doubleVal
+        } else if let stringVal = try? container.decode(String.self) {
+            value = stringVal
+        } else if let boolVal = try? container.decode(Bool.self) {
+            value = boolVal
+        } else if let arrayVal = try? container.decode([AnyCodable].self) {
+            value = arrayVal.map { $0.value }
+        } else if let dictVal = try? container.decode([String: AnyCodable].self) {
+            value = dictVal.mapValues { $0.value }
+        } else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unsupported type")
+        }
+    }
+}
+
+extension Encodable {
+    func encodeToDictionary() throws -> [String: AnyCodable] {
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        let data = try encoder.encode(self)
+        guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+            throw NSError(domain: "EncodingError", code: 0, userInfo: nil)
+        }
+        let codableDictionary = try Self.processDictionary(dictionary)
+        return codableDictionary
+    }
+
+    private static func processDictionary(_ dictionary: [String: Any]) throws -> [String: AnyCodable] {
+        var result: [String: AnyCodable] = [:]
+        for (key, value) in dictionary {
+            if let value = value as? Encodable {
+                result[key] = AnyCodable(try value.encodeToDictionary())
+            } else if let value = value as? [Encodable] {
+                result[key] = AnyCodable(try value.map { try $0.encodeToDictionary() })
+            } else if let value = value as? [String: Any] {
+                result[key] = AnyCodable(try processDictionary(value))
+            } else {
+                result[key] = AnyCodable(value)
+            }
+        }
+        return result
+    }
+}
+
+extension Decodable {
+    init(from dictionary: [String: AnyCodable]) throws {
+        let data = try JSONSerialization.data(withJSONObject: dictionary.mapValues { $0.value }, options: [])
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        self = try decoder.decode(Self.self, from: data)
+    }
+}
 

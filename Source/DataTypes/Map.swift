@@ -16,8 +16,13 @@ struct Map: Equatable, Codable {
         self.conflicts = conflicts
     }
 
+<<<<<<< Updated upstream
     let objectId: ObjectId
     private var mapValues: [String: Object]
+=======
+    public let objectId: ObjectId
+    public var mapValues: [String: Object]
+>>>>>>> Stashed changes
     var conflicts: [String: [ObjectId: Object]]
 
     subscript(_ key: String) -> Object? {
